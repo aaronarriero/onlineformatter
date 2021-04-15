@@ -20,6 +20,8 @@ class Formatter extends Component {
         this.copyToClipboard = copyToClipboard.bind(this)
         this.clear = clear.bind(this)
         this.save = save.bind(this)
+        this.escapeQuotes = escapeQuotes.bind(this)
+        this.unescapeQuotes = unescapeQuotes.bind(this)
     }
 
     render() {
@@ -58,6 +60,14 @@ class Formatter extends Component {
                     >
                         <Dropdown.Item onClick={this.base64Encode}>Encode</Dropdown.Item>
                         <Dropdown.Item onClick={this.base64Decode}>Decode</Dropdown.Item>
+                    </DropdownButton>
+                    <DropdownButton
+                        variant='primary'
+                        title='Quotes'
+                        id='quotes'
+                    >
+                        <Dropdown.Item onClick={this.escapeQuotes}>Escape</Dropdown.Item>
+                        <Dropdown.Item onClick={this.unescapeQuotes}>Unescape</Dropdown.Item>
                     </DropdownButton>
                     <Button
                         variant='primary'
@@ -116,6 +126,16 @@ function save() {
     } catch (e) {
         this.setState({statusMessage: 'Saving files is not supported by your browser'})
     }
+}
+
+function escapeQuotes() {
+    const escapedText = this.state.text.replace(/"/g, '\\"');
+    this.setState({text: escapedText, statusMessage: 'Escaped quotes'})
+}
+
+function unescapeQuotes() {
+    const unescapedText = this.state.text.replace(/\\"/g, '"')
+    this.setState({text: unescapedText, statusMessage: 'Unescaped quotes'})
 }
 
 function formatJSON() {
