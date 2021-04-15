@@ -22,6 +22,8 @@ class Formatter extends Component {
         this.save = save.bind(this)
         this.escapeQuotes = escapeQuotes.bind(this)
         this.unescapeQuotes = unescapeQuotes.bind(this)
+        this.urlEncode = urlEncode.bind(this)
+        this.urlDecode = urlDecode.bind(this)
     }
 
     render() {
@@ -68,6 +70,14 @@ class Formatter extends Component {
                     >
                         <Dropdown.Item onClick={this.escapeQuotes}>Escape</Dropdown.Item>
                         <Dropdown.Item onClick={this.unescapeQuotes}>Unescape</Dropdown.Item>
+                    </DropdownButton>
+                    <DropdownButton
+                        variant='primary'
+                        title='URL'
+                        id='url'
+                    >
+                        <Dropdown.Item onClick={this.urlEncode}>Encode</Dropdown.Item>
+                        <Dropdown.Item onClick={this.urlDecode}>Decode</Dropdown.Item>
                     </DropdownButton>
                     <Button
                         variant='primary'
@@ -136,6 +146,16 @@ function escapeQuotes() {
 function unescapeQuotes() {
     const unescapedText = this.state.text.replace(/\\"/g, '"')
     this.setState({text: unescapedText, statusMessage: 'Unescaped quotes'})
+}
+
+function urlEncode() {
+    const urlEncodedText = encodeURI(this.state.text)
+    this.setState({text: urlEncodedText, statusMessage: 'URL encoded'})
+}
+
+function urlDecode() {
+    const urlDecodedText = decodeURI(this.state.text)
+    this.setState({text: urlDecodedText, statusMessage: 'URL decoded'})
 }
 
 function formatJSON() {
