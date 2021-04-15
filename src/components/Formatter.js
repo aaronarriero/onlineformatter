@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {Button, Container, Dropdown, DropdownButton, Row} from "react-bootstrap";
 import StatusBar from "./StatusBar";
+import { saveAs } from 'file-saver';
 
 class Formatter extends Component {
     constructor(props) {
@@ -18,6 +19,7 @@ class Formatter extends Component {
         this.minifyJSON = minifyJSON.bind(this)
         this.copyToClipboard = copyToClipboard.bind(this)
         this.clear = clear.bind(this)
+        this.save = save.bind(this)
     }
 
     render() {
@@ -59,6 +61,13 @@ class Formatter extends Component {
                     </DropdownButton>
                     <Button
                         variant='primary'
+                        title='Save to...'
+                        id='save'
+                        onClick={this.save}>
+                        Save to...
+                    </Button>
+                    <Button
+                        variant='primary'
                         title='Clear'
                         id='clear'
                         onClick={this.clear}>
@@ -97,6 +106,16 @@ function copyToClipboard(e) {
 function clear() {
     this.setState({text: ''})
     this.setState({statusMessage: 'Text cleared'})
+}
+
+function save() {
+    try {
+        var blob = new Blob([this.state.text], {type: "text/plain;charset=utf-8"});
+        saveAs(blob, "pasta.txt");
+        this.setState({statusMessage: 'Saved contents to file'})
+    } catch (e) {
+        this.setState({statusMessage: 'Saving files is not supported by your browser'})
+    }
 }
 
 function formatJSON() {
