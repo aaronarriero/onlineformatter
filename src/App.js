@@ -1,12 +1,12 @@
 import './App.css';
 import Formatter from "./components/Formatter";
+import Header from "./components/Header";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
+        <Header/>
         <Formatter/>
-      </header>
     </div>
   );
 }
