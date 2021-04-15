@@ -17,12 +17,13 @@ class Formatter extends Component {
         this.base64Decode = base64Decode.bind(this)
         this.minifyJSON = minifyJSON.bind(this)
         this.copyToClipboard = copyToClipboard.bind(this)
+        this.clear = clear.bind(this)
     }
 
     render() {
         return (
             <Container>
-                <Row>
+                <Row className="button-row">
                     {
                         document.queryCommandSupported('copy') &&
                         <Button
@@ -56,8 +57,15 @@ class Formatter extends Component {
                         <Dropdown.Item onClick={this.base64Encode}>Encode</Dropdown.Item>
                         <Dropdown.Item onClick={this.base64Decode}>Decode</Dropdown.Item>
                     </DropdownButton>
+                    <Button
+                        variant='primary'
+                        title='Clear'
+                        id='clear'
+                        onClick={this.clear}>
+                        Clear
+                    </Button>
                 </Row>
-                <Row>
+                <Row className="textarea-row">
                     <textarea
                         value={this.state.text}
                         onChange={this.handleChange}
@@ -65,7 +73,7 @@ class Formatter extends Component {
                         name="textarea"
                     />
                 </Row>
-                <Row>
+                <Row className="status-bar-row">
                     <StatusBar text={this.state.text} statusMessage={this.state.statusMessage}/>
                 </Row>
             </Container>
@@ -84,6 +92,11 @@ function copyToClipboard(e) {
         e.target.focus();
         this.setState({statusMessage: 'Text copied to clipboard'})
     }
+}
+
+function clear() {
+    this.setState({text: ''})
+    this.setState({statusMessage: 'Text cleared'})
 }
 
 function formatJSON() {
