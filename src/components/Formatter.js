@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {Button, Container, Dropdown, DropdownButton, Row} from "react-bootstrap";
+import React, {Component, Fragment} from "react";
+import {Button, Dropdown, DropdownButton, Row} from "react-bootstrap";
 import StatusBar from "./StatusBar";
 import { saveAs } from 'file-saver';
 
@@ -28,7 +28,7 @@ class Formatter extends Component {
 
     render() {
         return (
-            <Container>
+            <Fragment>
                 <Row className="button-row">
                     {
                         document.queryCommandSupported('copy') &&
@@ -105,7 +105,7 @@ class Formatter extends Component {
                 <Row className="status-bar-row">
                     <StatusBar text={this.state.text} statusMessage={this.state.statusMessage}/>
                 </Row>
-            </Container>
+            </Fragment>
         );
     }
 }
