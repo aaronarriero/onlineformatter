@@ -10,7 +10,7 @@ class Formatter extends Component {
             text: '{"id":1}',
             undoStack: [],
             redoStack: [],
-            statusMessage: 'Waiting for input...'
+            status: 'Waiting for input...'
         };
         this.handleChange = handleChange.bind(this)
         this.formatJSON = formatJSON.bind(this)
@@ -37,6 +37,10 @@ class Formatter extends Component {
 
     backwardText(text) {
         this.setState({text: text, redoStack: [...this.state.redoStack, this.state.text]})
+    }
+
+    setStatus(status) {
+        this.setState({status: status})
     }
 
     render() {
@@ -132,7 +136,7 @@ class Formatter extends Component {
                     />
                 </Row>
                 <Row className="status-bar-row">
-                    <StatusBar text={this.state.text} statusMessage={this.state.statusMessage}/>
+                    <StatusBar text={this.state.text} status={this.state.status}/>
                 </Row>
             </Fragment>
         );
@@ -147,30 +151,30 @@ function copyToClipboard(e) {
     this.textArea.select();
     document.execCommand('copy');
     e.target.focus();
-    this.setState({statusMessage: 'Text copied to clipboard'})
+    this.setStatus('Text copied to clipboard')
 }
 
 function clear() {
     this.forwardText('')
-    this.setState({statusMessage: 'Text cleared'})
+    this.setStatus('Text cleared')
 }
 
 function save() {
     try {
         var blob = new Blob([this.state.text], {type: "text/plain;charset=utf-8"});
         saveAs(blob, "pasta.txt");
-        this.setState({statusMessage: 'Saved contents to file'})
+        this.setStatus('Saved contents to file')
     } catch (e) {
-        this.setState({statusMessage: 'Saving files is not supported by your browser'})
+        this.setStatus('Saving files is not supported by your browser')
     }
 }
 
 function undo() {
     if (this.state.undoStack.length > 0) {
         this.backwardText(this.state.undoStack.pop())
-        this.setState({statusMessage: 'Undo'})
+        this.setStatus('Undo')
     } else {
-        this.setState({statusMessage: 'Nothing to undo'})
+        this.setStatus('Nothing to undo')
     }
 }
 
@@ -180,34 +184,34 @@ function redo() {
         //     undoStack: [...this.state.undoStack, this.state.redoStack.pop()]
         // })
         this.setState({text: this.state.redoStack.pop(), undoStack: [...this.state.undoStack, this.state.text]})
-        this.setState({statusMessage: 'Redo'})
+        this.setStatus('Redo')
     } else {
-        this.setState({statusMessage: 'Nothing to redo'})
+        this.setStatus('Nothing to redo')
     }
 }
 
 function escapeQuotes() {
     const escapedText = this.state.text.replace(/"/g, '\\"');
     this.forwardText(escapedText)
-    this.setState({statusMessage: 'Escaped quotes'})
+    this.setStatus('Escaped quotes')
 }
 
 function unescapeQuotes() {
     const unescapedText = this.state.text.replace(/\\"/g, '"')
     this.forwardText(unescapedText)
-    this.setState({statusMessage: 'Unescaped quotes'})
+    this.setStatus('Unescaped quotes')
 }
 
 function urlEncode() {
     const urlEncodedText = encodeURI(this.state.text)
     this.forwardText(urlEncodedText)
-    this.setState({statusMessage: 'URL encoded'})
+    this.setStatus('URL encoded')
 }
 
 function urlDecode() {
     const urlDecodedText = decodeURI(this.state.text)
     this.forwardText(urlDecodedText)
-    this.setState({statusMessage: 'URL decoded'})
+    this.setStatus('URL decoded')
 }
 
 function formatJSON() {
@@ -215,9 +219,9 @@ function formatJSON() {
         let array = JSON.parse(this.state.text)
         let text = JSON.stringify(array, null, '  ')
         this.forwardText(text)
-        this.setState({statusMessage: 'Formatted JSON'})
+        this.setStatus('Formatted JSON')
     } catch (e) {
-        this.setState({statusMessage: 'This is not JSON...'})
+        this.setStatus('This is not JSON...')
     }
 }
 
@@ -226,25 +230,25 @@ function minifyJSON() {
         let array = JSON.parse(this.state.text)
         let text = JSON.stringify(array)
         this.forwardText(text)
-        this.setState({statusMessage: 'Minified JSON'})
+        this.setStatus('Minified JSON')
     } catch (e) {
-        this.setState({statusMessage: 'This is not JSON...'})
+        this.setStatus('This is not JSON...')
     }
 }
 
 function base64Encode() {
     let text = btoa(this.state.text)
     this.forwardText(text)
-    this.setState({statusMessage: 'Encoded into Base64'})
+    this.setStatus('Encoded into Base64')
 }
 
 function base64Decode() {
     try {
         let text = atob(this.state.text)
         this.forwardText(text)
-        this.setState({statusMessage: 'Decoded from Base64'})
+        this.setStatus('Decoded from Base64')
     } catch (e) {
-        this.setState({statusMessage: 'This is not in Base64...'})
+        this.setStatus('This is not in Base64...')
     }
 }
 
@@ -259,7 +263,7 @@ function formatXML() {
         if (node.match( /^<?\w[^>]*[^/]$/ )) indent += tab;
     });
     this.forwardText(formatted.substring(1, formatted.length-3))
-    this.setState({statusMessage: 'Formatted XML'})
+    this.setStatus('Formatted XML')
 }
 
 export default Formatter;
