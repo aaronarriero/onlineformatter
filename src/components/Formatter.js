@@ -32,7 +32,10 @@ class Formatter extends Component {
     forwardText(text) {
         if (this.state.text !== text) {
             this.setState({text: text, undoStack: [...this.state.undoStack, this.state.text], redoStack: []})
+            return true
         }
+        this.setStatus('That had no effect...')
+        return false
     }
 
     backwardText(text) {
@@ -155,8 +158,9 @@ function copyToClipboard(e) {
 }
 
 function clear() {
-    this.forwardText('')
-    this.setStatus('Text cleared')
+    if (this.forwardText('')) {
+        this.setStatus('Text cleared')
+    }
 }
 
 function save() {
@@ -192,34 +196,39 @@ function redo() {
 
 function escapeQuotes() {
     const escapedText = this.state.text.replace(/"/g, '\\"');
-    this.forwardText(escapedText)
-    this.setStatus('Escaped quotes')
+    if (this.forwardText(escapedText)) {
+        this.setStatus('Escaped quotes')
+    }
 }
 
 function unescapeQuotes() {
     const unescapedText = this.state.text.replace(/\\"/g, '"')
-    this.forwardText(unescapedText)
-    this.setStatus('Unescaped quotes')
+    if (this.forwardText(unescapedText)) {
+        this.setStatus('Unescaped quotes')
+    }
 }
 
 function urlEncode() {
     const urlEncodedText = encodeURI(this.state.text)
-    this.forwardText(urlEncodedText)
-    this.setStatus('URL encoded')
+    if (this.forwardText(urlEncodedText)) {
+        this.setStatus('URL encoded')
+    }
 }
 
 function urlDecode() {
     const urlDecodedText = decodeURI(this.state.text)
-    this.forwardText(urlDecodedText)
-    this.setStatus('URL decoded')
+    if (this.forwardText(urlDecodedText)) {
+        this.setStatus('URL decoded')
+    }
 }
 
 function formatJSON() {
     try {
         let array = JSON.parse(this.state.text)
         let text = JSON.stringify(array, null, '  ')
-        this.forwardText(text)
-        this.setStatus('Formatted JSON')
+        if (this.forwardText(text)) {
+            this.setStatus('Formatted JSON')
+        }
     } catch (e) {
         this.setStatus('This is not JSON...')
     }
@@ -229,8 +238,9 @@ function minifyJSON() {
     try {
         let array = JSON.parse(this.state.text)
         let text = JSON.stringify(array)
-        this.forwardText(text)
-        this.setStatus('Minified JSON')
+        if (this.forwardText(text)) {
+            this.setStatus('Minified JSON')
+        }
     } catch (e) {
         this.setStatus('This is not JSON...')
     }
@@ -238,15 +248,17 @@ function minifyJSON() {
 
 function base64Encode() {
     let text = btoa(this.state.text)
-    this.forwardText(text)
-    this.setStatus('Encoded into Base64')
+    if (this.forwardText(text)) {
+        this.setStatus('Encoded into Base64')
+    }
 }
 
 function base64Decode() {
     try {
         let text = atob(this.state.text)
-        this.forwardText(text)
-        this.setStatus('Decoded from Base64')
+        if (this.forwardText(text)) {
+            this.setStatus('Decoded from Base64')
+        }
     } catch (e) {
         this.setStatus('This is not in Base64...')
     }
@@ -262,8 +274,9 @@ function formatXML() {
         formatted += indent + '<' + node + '>\r\n';
         if (node.match( /^<?\w[^>]*[^/]$/ )) indent += tab;
     });
-    this.forwardText(formatted.substring(1, formatted.length-3))
-    this.setStatus('Formatted XML')
+    if (this.forwardText(formatted.substring(1, formatted.length-3))) {
+        this.setStatus('Formatted XML')
+    }
 }
 
 export default Formatter;
