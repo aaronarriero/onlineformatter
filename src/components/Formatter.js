@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from "react";
-import {Button, Dropdown, DropdownButton, Row} from "react-bootstrap";
+import {Badge, Button, Dropdown, DropdownButton, Row} from "react-bootstrap";
 import StatusBar from "./StatusBar";
 import { saveAs } from 'file-saver';
 
@@ -8,8 +8,9 @@ class Formatter extends Component {
         super(props);
         this.state = {
             text: '{"id":1}',
-            statusMessage: 'Waiting for input...',
-            statusStyle: 'primary'
+            undoStack: [],
+            redoStack: [],
+            statusMessage: 'Waiting for input...'
         };
         this.handleChange = handleChange.bind(this)
         this.formatJSON = formatJSON.bind(this)
@@ -24,6 +25,18 @@ class Formatter extends Component {
         this.unescapeQuotes = unescapeQuotes.bind(this)
         this.urlEncode = urlEncode.bind(this)
         this.urlDecode = urlDecode.bind(this)
+        this.undo = undo.bind(this)
+        this.redo = redo.bind(this)
+    }
+
+    forwardText(text) {
+        if (this.state.text !== text) {
+            this.setState({text: text, undoStack: [...this.state.undoStack, this.state.text], redoStack: []})
+        }
+    }
+
+    backwardText(text) {
+        this.setState({text: text, redoStack: [...this.state.redoStack, this.state.text]})
     }
 
     render() {
@@ -88,6 +101,22 @@ class Formatter extends Component {
                     </Button>
                     <Button
                         variant='primary'
+                        title='Undo'
+                        id='undo'
+                        onClick={this.undo}>
+                        Undo&nbsp;
+                        <Badge variant="light">{this.state.undoStack.length}</Badge>
+                    </Button>
+                    <Button
+                        variant='primary'
+                        title='Redo'
+                        id='redo'
+                        onClick={this.redo}>
+                        Redo&nbsp;
+                        <Badge variant="light">{this.state.redoStack.length}</Badge>
+                    </Button>
+                    <Button
+                        variant='primary'
                         title='Clear'
                         id='clear'
                         onClick={this.clear}>
@@ -115,16 +144,14 @@ function handleChange(e) {
 }
 
 function copyToClipboard(e) {
-    if (this.textArea) {
-        this.textArea.select();
-        document.execCommand('copy');
-        e.target.focus();
-        this.setState({statusMessage: 'Text copied to clipboard'})
-    }
+    this.textArea.select();
+    document.execCommand('copy');
+    e.target.focus();
+    this.setState({statusMessage: 'Text copied to clipboard'})
 }
 
 function clear() {
-    this.setState({text: ''})
+    this.forwardText('')
     this.setState({statusMessage: 'Text cleared'})
 }
 
@@ -138,31 +165,57 @@ function save() {
     }
 }
 
+function undo() {
+    if (this.state.undoStack.length > 0) {
+        this.backwardText(this.state.undoStack.pop())
+        this.setState({statusMessage: 'Undo'})
+    } else {
+        this.setState({statusMessage: 'Nothing to undo'})
+    }
+}
+
+function redo() {
+    if (this.state.redoStack.length > 0) {
+        // this.setState({
+        //     undoStack: [...this.state.undoStack, this.state.redoStack.pop()]
+        // })
+        this.setState({text: this.state.redoStack.pop(), undoStack: [...this.state.undoStack, this.state.text]})
+        this.setState({statusMessage: 'Redo'})
+    } else {
+        this.setState({statusMessage: 'Nothing to redo'})
+    }
+}
+
 function escapeQuotes() {
     const escapedText = this.state.text.replace(/"/g, '\\"');
-    this.setState({text: escapedText, statusMessage: 'Escaped quotes'})
+    this.forwardText(escapedText)
+    this.setState({statusMessage: 'Escaped quotes'})
 }
 
 function unescapeQuotes() {
     const unescapedText = this.state.text.replace(/\\"/g, '"')
-    this.setState({text: unescapedText, statusMessage: 'Unescaped quotes'})
+    this.forwardText(unescapedText)
+    this.setState({statusMessage: 'Unescaped quotes'})
 }
 
 function urlEncode() {
     const urlEncodedText = encodeURI(this.state.text)
-    this.setState({text: urlEncodedText, statusMessage: 'URL encoded'})
+    this.forwardText(urlEncodedText)
+    this.setState({statusMessage: 'URL encoded'})
 }
 
 function urlDecode() {
     const urlDecodedText = decodeURI(this.state.text)
-    this.setState({text: urlDecodedText, statusMessage: 'URL decoded'})
+    this.forwardText(urlDecodedText)
+    this.setState({statusMessage: 'URL decoded'})
 }
 
 function formatJSON() {
     try {
         let array = JSON.parse(this.state.text)
         let text = JSON.stringify(array, null, '  ')
-        this.setState({text: text, statusMessage: 'Formatted JSON'})
+        this.forwardText(text)
+        this.setState({statusMessage: 'Formatted JSON'})
     } catch (e) {
         this.setState({statusMessage: 'This is not JSON...'})
     }
@@ -172,7 +225,8 @@ function minifyJSON() {
     try {
         let array = JSON.parse(this.state.text)
         let text = JSON.stringify(array)
-        this.setState({text: text, statusMessage: 'Minified JSON'})
+        this.forwardText(text)
+        this.setState({statusMessage: 'Minified JSON'})
     } catch (e) {
         this.setState({statusMessage: 'This is not JSON...'})
     }
@@ -180,13 +234,15 @@ function minifyJSON() {
 
 function base64Encode() {
     let text = btoa(this.state.text)
-    this.setState({text: text, statusMessage: 'Encoded into Base64'})
+    this.forwardText(text)
+    this.setState({statusMessage: 'Encoded into Base64'})
 }
 
 function base64Decode() {
     try {
         let text = atob(this.state.text)
-        this.setState({text: text, statusMessage: 'Decoded from Base64'})
+        this.forwardText(text)
+        this.setState({statusMessage: 'Decoded from Base64'})
     } catch (e) {
         this.setState({statusMessage: 'This is not in Base64...'})
     }
@@ -202,7 +258,8 @@ function formatXML() {
         formatted += indent + '<' + node + '>\r\n';
         if (node.match( /^<?\w[^>]*[^/]$/ )) indent += tab;
     });
-    this.setState({text: formatted.substring(1, formatted.length-3), statusMessage: 'Formatted XML'})
+    this.forwardText(formatted.substring(1, formatted.length-3))
+    this.setState({statusMessage: 'Formatted XML'})
 }
 
 export default Formatter;
