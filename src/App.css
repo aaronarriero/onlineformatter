@@ -8,6 +8,20 @@ body {
   margin-bottom: 30px; /* Margin bottom by footer height */
 }
 
+a {
+  color: orange;
+}
+
+a:hover {
+  color: darkorange;
+}
+
+.btn-primary {
+  color: white;
+  background-color: #34506e;
+  border-color: white;
+}
+
 .page-footer {
   position: absolute;
   bottom: 0;
@@ -24,11 +38,13 @@ h1 {
 }
 
 .button-row button {
-  margin-right: 2px;
+  margin-right: 4px;
 }
 
 .btn {
   min-width: 100px;
+  border-style: none;
+  border-radius: 8px 8px 0 0;
 }
 
 textarea {
@@ -50,4 +66,9 @@ textarea {
   background-color: #dddddd;
   font-size: 10pt;
   color: #333333;
+}
+
+.status-bar-divider {
+  border-left: solid 1px #aaaaaa;
+  padding: 0 10px 0 5px;
 }

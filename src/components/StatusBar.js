@@ -18,7 +18,8 @@ class StatusBar extends Component {
         return (
             <div className="status-bar clearfix">
                 <span className="float-left">{this.getStatus()}</span>
-                <span className="float-right">Length: {this.getLength()} | Total lines: {this.getLineCount()}</span>
+                <span className="float-right status-bar-divider">Total lines: {this.getLineCount()}</span>
+                <span className="float-right status-bar-divider">Length: {this.getLength()}</span>
             </div>
         );
     }
