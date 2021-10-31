@@ -1,38 +1,75 @@
-.App {
-  text-align: center;
+html {
+  position: relative;
+  min-height: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
+body {
+  color: #dddddd;
   background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  margin-bottom: 30px; /* Margin bottom by footer height */
+}
+
+a {
+  color: orange;
+}
+
+a:hover {
+  color: darkorange;
+}
+
+.btn-primary {
   color: white;
+  background-color: #34506e;
+  border-color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.page-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  background-color: #282c34;
+  text-align: center;
+  color: #aaaaaa;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+h1 {
+  color: #cccccc;
+}
+
+.button-row button {
+  margin-right: 4px;
+}
+
+.btn {
+  min-width: 100px;
+  border-style: none;
+  border-radius: 8px 8px 0 0;
+}
+
+textarea {
+  width: 100%;
+  height: 400px;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  box-sizing: border-box;         /* Opera/IE 8+ */
+  font-family: monospace;
+  font-size: 11pt;
+  background-color: #dddddd;
+  border: solid 1px #aaaaaa;
+  resize: vertical;
+}
+
+.status-bar {
+  padding: 0 5px;
+  width: 100%;
+  background-color: #dddddd;
+  font-size: 10pt;
+  color: #333333;
+}
+
+.status-bar-divider {
+  border-left: solid 1px #aaaaaa;
+  padding: 0 10px 0 5px;
 }
