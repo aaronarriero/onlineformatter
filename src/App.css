@@ -59,6 +59,7 @@ textarea {
   background-color: #dddddd;
   border: solid 1px #aaaaaa;
   resize: vertical;
+  outline: none;
 }
 
 .status-bar {
