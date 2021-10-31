@@ -1,11 +1,14 @@
 import React, {Component} from "react";
-import {Row} from "react-bootstrap";
+import {Col, Row} from "react-bootstrap";
 
 class Header extends Component {
     render() {
         return (
             <Row>
-                <h1>Online formatter</h1>
+                <Col>
+                    <h1>Online formatter</h1>
+                    <p>Privately format JSON and XML online on this fully clientside online formatter.</p>
+                </Col>
             </Row>
         );
     }
