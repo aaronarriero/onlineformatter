@@ -7,7 +7,7 @@ class Formatter extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            text: '{"id":1}',
+            text: '',
             undoStack: [],
             redoStack: [],
             status: 'Waiting for input...'
