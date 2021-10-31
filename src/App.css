@@ -4,6 +4,7 @@ html {
 }
 
 body {
+  color: #dddddd;
   background-color: #282c34;
   margin-bottom: 30px; /* Margin bottom by footer height */
 }
